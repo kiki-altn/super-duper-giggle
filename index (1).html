@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>Vabank · Финальная версия</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Сплэш-экран -->
+        <div id="splash-screen" class="splash">
+            <div class="splash-content">
+                <i class="fas fa-university"></i>
+                <h1>Vabank</h1>
+                <div class="loader"></div>
+            </div>
+        </div>
+
+        <!-- Экран авторизации -->
+        <div id="auth-screen" class="screen auth-screen">
+            <div class="glass-card">
+                <div class="logo-area">
+                    <i class="fas fa-university"></i>
+                    <h1>Vabank</h1>
+                    <p>Цифровой банк</p>
+                </div>
+                <div class="auth-tabs">
+                    <button class="tab-btn active" id="login-tab-btn">Вход</button>
+                    <button class="tab-btn" id="register-tab-btn">Регистрация</button>
+                </div>
+                
+                <div id="login-form" class="auth-form active">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="login-username" placeholder="Никнейм">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-pin" placeholder="ПИН-код (4 цифры)" maxlength="4">
+                    </div>
+                    <button class="btn-primary" id="login-btn">Войти</button>
+                </div>
+                
+                <div id="register-form" class="auth-form">
+                    <div class="input-group">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="reg-username" placeholder="Никнейм">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-id-card"></i>
+                        <input type="text" id="reg-fullname" placeholder="Ваше имя (для верификации)">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="reg-email" placeholder="Email (для верификации)">
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="reg-pin" placeholder="ПИН-код (4 цифры)" maxlength="4">
+                    </div>
+                    <button class="btn-primary" id="register-btn">Создать аккаунт</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Основной экран -->
+        <div id="main-screen" class="screen main-screen" style="display: none;">
+            <!-- Верхняя панель -->
+            <div class="top-bar-modern">
+                <div class="user-greeting">
+                    <h2 id="displayUsername">Загрузка...</h2>
+                    <p>Уровень <span id="displayLevel">1</span> • <span id="displayXp">0</span> XP</p>
+                </div>
+                <div class="header-icons">
+                    <button class="icon-btn" id="activityBtn" title="Активность"><i class="fas fa-chart-line"></i></button>
+                    <button class="icon-btn" id="onlineBtn" title="Онлайн"><i class="fas fa-users"></i></button>
+                    <button class="icon-btn" id="leaderboardBtn" title="Лидерборд"><i class="fas fa-trophy"></i></button>
+                </div>
+            </div>
+
+            <!-- Карта пользователя -->
+            <div class="card-showcase" id="userCard">
+                <div class="card-gradient" id="cardGradient">
+                    <div class="card-chip"><i class="fas fa-microchip"></i></div>
+                    <div class="card-number" id="cardNumber">•••• •••• •••• 2024</div>
+                    <div class="card-holder" id="cardHolder">VABANK USER</div>
+                    <div class="card-expiry">12/28</div>
+                    <div class="card-balance" id="cardBalance">5 000 ₽</div>
+                </div>
+            </div>
+
+            <!-- Блок статистики -->
+            <div class="stats-modern">
+                <div class="stat-item">
+                    <span class="stat-label">💰 Рубли</span>
+                    <span class="stat-value" id="balanceRub">0 ₽</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">💳 Кредит</span>
+                    <span class="stat-value" id="creditRub">0 ₽</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">💵 Доллары</span>
+                    <span class="stat-value" id="balanceUsd">0 $</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">🏆 Кэшбэк</span>
+                    <span class="stat-value" id="cashback">150 ₽</span>
+                </div>
+            </div>
+
+            <!-- Быстрые действия (основные разделы) -->
+            <div class="quick-actions">
+                <button class="action-modern" id="transferBtn"><i class="fas fa-exchange-alt"></i><span>Перевод</span></button>
+                <button class="action-modern" id="paymentsBtn"><i class="fas fa-credit-card"></i><span>Платежи</span></button>
+                <button class="action-modern" id="questsBtn"><i class="fas fa-tasks"></i><span>Квесты</span></button>
+                <button class="action-modern" id="businessBtn"><i class="fas fa-store"></i><span>Бизнес</span></button>
+                <button class="action-modern" id="investBtn"><i class="fas fa-chart-line"></i><span>Инвестиции</span></button>
+                <button class="action-modern" id="cardsBtn"><i class="fas fa-id-card"></i><span>Карты</span></button>
+            </div>
+
+            <!-- Поле ввода и курс (адаптивное) -->
+            <div class="input-row">
+                <input type="number" id="amountInput" class="amount-input" placeholder="Сумма" value="1000">
+                <div class="currency-info">
+                    <i class="fas fa-dollar-sign"></i> <span id="usdRate">70.50</span> ₽
+                </div>
+                <button class="btn-small" id="nextDayBtn">📅 День +1</button>
+            </div>
+
+            <!-- Админ-панель (видна только админу) -->
+            <div id="admin-panel" class="admin-panel" style="display: none;">
+                <h4>Админ-панель</h4>
+                <div class="admin-actions">
+                    <input type="number" id="adminAmount" placeholder="Сумма" value="1000">
+                    <button class="btn-small" id="adminAddRub">➕ Рубли</button>
+                    <button class="btn-small" id="adminAddUsd">💵 Доллары</button>
+                </div>
+                <div class="admin-search">
+                    <input type="text" id="adminSearchUser" placeholder="Никнейм">
+                    <button class="btn-small" id="adminViewUser">👁️ Просмотр</button>
+                </div>
+            </div>
+
+            <!-- Нижняя навигация (разделы) -->
+            <div class="bottom-nav">
+                <button class="nav-item active" id="homeBtn"><i class="fas fa-home"></i><span>Главная</span></button>
+                <button class="nav-item" id="paymentsNavBtn"><i class="fas fa-credit-card"></i><span>Платежи</span></button>
+                <button class="nav-item" id="helpBtn"><i class="fas fa-question-circle"></i><span>Помощь</span></button>
+                <button class="nav-item" id="leaderboardNavBtn"><i class="fas fa-trophy"></i><span>Топ</span></button>
+                <button class="nav-item" id="profileNavBtn"><i class="fas fa-user"></i><span>Профиль</span></button>
+            </div>
+
+            <!-- Уведомления -->
+            <div id="notification-area"></div>
+        </div>
+
+        <!-- Модальные окна (полный набор) -->
+        <!-- Активность -->
+        <div id="activityModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-chart-line"></i> Моя активность</h3>
+                <div class="activity-stats">
+                    <div class="activity-item"><span>💰 Всего заработано:</span><span class="activity-value" id="totalEarned">0 ₽</span></div>
+                    <div class="activity-item"><span>📊 Операций:</span><span class="activity-value" id="totalOperations">0</span></div>
+                    <div class="activity-item"><span>🏪 Доход с бизнесов:</span><span class="activity-value" id="businessIncome">0 ₽</span></div>
+                    <div class="activity-item"><span>📈 Инвестиций:</span><span class="activity-value" id="investCount">0</span></div>
+                </div>
+                <h4>Последние операции</h4>
+                <div id="activityHistory" class="activity-history"></div>
+            </div>
+        </div>
+
+        <!-- Онлайн пользователи -->
+        <div id="onlineModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-users"></i> Сейчас онлайн</h3>
+                <div id="onlineList" class="online-list"></div>
+            </div>
+        </div>
+
+        <!-- Лидерборд -->
+        <div id="leaderboardModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-trophy"></i> Топ игроков</h3>
+                <div class="leaderboard-tabs">
+                    <button class="leaderboard-tab active" data-type="rub">💰 По рублям</button>
+                    <button class="leaderboard-tab" data-type="level">📊 По уровню</button>
+                    <button class="leaderboard-tab" data-type="business">🏪 По бизнесам</button>
+                    <button class="leaderboard-tab" data-type="invest">📈 По инвестициям</button>
+                </div>
+                <div id="leaderboardList" class="leaderboard-list"></div>
+            </div>
+        </div>
+
+        <!-- Платежи -->
+        <div id="paymentsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-credit-card"></i> Платежи и услуги</h3>
+                <div class="payments-grid">
+                    <button class="payment-item" data-service="mobile"><i class="fas fa-mobile-alt"></i><span>Мобильная связь</span></button>
+                    <button class="payment-item" data-service="internet"><i class="fas fa-wifi"></i><span>Интернет</span></button>
+                    <button class="payment-item" data-service="utilities"><i class="fas fa-home"></i><span>ЖКХ</span></button>
+                    <button class="payment-item" data-service="tv"><i class="fas fa-tv"></i><span>Телевидение</span></button>
+                </div>
+                <div id="paymentDetails" style="display: none;">
+                    <p id="selectedService"></p>
+                    <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="paymentAmount" placeholder="Сумма платежа"></div>
+                    <button class="btn-primary" id="payBtn">Оплатить</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Карты -->
+        <div id="cardsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-id-card"></i> Мои карты</h3>
+                <div id="cardsList" class="cards-grid"></div>
+                <button class="btn-primary" id="orderCardBtn">Заказать карту</button>
+                <p class="small-note" id="cardOrderHint"></p>
+            </div>
+        </div>
+
+        <!-- Квесты -->
+        <div id="questsModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-tasks"></i> Квесты</h3>
+                <div id="questsList"></div>
+            </div>
+        </div>
+
+        <!-- Бизнес -->
+        <div id="businessModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-store"></i> Бизнес</h3>
+                <div id="businessList"></div>
+            </div>
+        </div>
+
+        <!-- Инвестиции -->
+        <div id="investModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-chart-line"></i> Инвестиции</h3>
+                <p>Риск 50%: сумма удваивается или теряется</p>
+                <input type="number" id="investAmount" class="amount-input" placeholder="Сумма в рублях">
+                <button class="btn-primary" id="investBtnAction">Инвестировать</button>
+            </div>
+        </div>
+
+        <!-- Перевод -->
+        <div id="transferModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-exchange-alt"></i> Перевод</h3>
+                <div class="input-group"><i class="fas fa-user"></i><input type="text" id="transferUsername" placeholder="Никнейм получателя"></div>
+                <div class="input-group"><i class="fas fa-coins"></i><input type="number" id="transferAmount" placeholder="Сумма в рублях"></div>
+                <button class="btn-primary" id="transferBtnAction">Перевести</button>
+            </div>
+        </div>
+
+        <!-- Профиль -->
+        <div id="profileModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-id-badge"></i> Профиль</h3>
+                <div class="profile-header">
+                    <div class="profile-avatar"><i class="fas fa-user-circle"></i><span class="verify-badge" id="profileVerifyBadge"><i class="fas fa-check-circle"></i></span></div>
+                    <div class="profile-name"><h2 id="profileUsername"></h2><p id="profileFullname"></p></div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-row"><span>📊 Уровень</span><span class="stat-value" id="profileLevel">1</span></div>
+                    <div class="stat-row"><span>⭐ Опыт</span><span class="stat-value" id="profileXp">0 XP</span></div>
+                    <div class="stat-row"><span>🏪 Бизнесов</span><span class="stat-value" id="profileBusinesses">0</span></div>
+                    <div class="stat-row"><span>💳 Карт</span><span class="stat-value" id="profileCards">0</span></div>
+                    <div class="stat-row"><span>✅ Верификация</span><span class="stat-value" id="profileVerified">Нет</span></div>
+                    <div class="stat-row"><span>📅 Регистрация</span><span class="stat-value" id="profileDate"></span></div>
+                </div>
+                <button class="btn-primary" id="verifyRequestBtn">Запросить верификацию</button>
+                <button class="btn-secondary" id="editProfileBtn">Редактировать профиль</button>
+            </div>
+        </div>
+
+        <!-- Помощь -->
+        <div id="helpModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-question-circle"></i> Правила банка</h3>
+                <div class="help-content">
+                    <h4>Как зарабатывать?</h4>
+                    <ul><li>✅ Выполняйте квесты</li><li>✅ Покупайте бизнесы</li><li>✅ Инвестируйте с риском 50%</li><li>✅ Ежедневный бонус при входе: +500 ₽</li></ul>
+                    <h4>Верификация</h4><p>Требуется: уровень 5+ и 2+ бизнеса.</p>
+                    <h4>Карты</h4><p>Уровень 3+, верификация, баланс ≥20000 ₽.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Админ-просмотр -->
+        <div id="adminViewModal" class="modal">
+            <div class="modal-content">
+                <span class="close">&times;</span>
+                <h3><i class="fas fa-user"></i> Данные пользователя</h3>
+                <div id="adminViewContent"></div>
+                <div class="admin-actions">
+                    <button class="btn-warning" id="adminWarnBtn">⚠️ Предупреждение</button>
+                    <button class="btn-danger" id="adminBanBtn">🔨 Бан</button>
+                    <button class="btn-success" id="adminUnbanBtn">✅ Разбанить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
